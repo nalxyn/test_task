@@ -1,18 +1,12 @@
-import json
-import logging
-import os
-import uuid
 from datetime import datetime
 from typing import Iterable, Tuple
-
-import psycopg2
 from dotenv import load_dotenv
 from lxml import etree
 from psycopg2 import sql
+import os, json, logging, uuid, psycopg2
 
 load_dotenv()
 logging.basicConfig(filename="data.log", level=logging.INFO)
-
 
 def create_connection():
     return psycopg2.connect(
@@ -22,7 +16,6 @@ def create_connection():
         host=os.getenv("POSTGRES_HOST"),
         port=os.getenv("POSTGRES_PORT"),
     )
-
 
 def _g_process_et_items(path, tag) -> Iterable[Tuple]:
     logging.info("_g_process_et_items")
@@ -36,10 +29,8 @@ def _g_process_et_items(path, tag) -> Iterable[Tuple]:
         logging.info("Generator element: %s", elem)
         elem.clear()
 
-
 def convert_timestamp(timestamp):
     return datetime.utcfromtimestamp(int(timestamp))
-
 
 def insert_sku(sku_data):
     logging.info("Insert_sku")
@@ -78,7 +69,6 @@ def insert_sku(sku_data):
                 sku_data["uuid"],
                 inserted_row,
             )
-
         except Exception as e:
             connection.rollback()
             logging.error(
@@ -87,11 +77,9 @@ def insert_sku(sku_data):
                 e,
             )
 
-
 def get_element_text(element, tag):
     found_element = element.find(tag)
     return found_element.text if found_element is not None else None
-
 
 def process_xml_file(xml_file_path):
     for event, elem in _g_process_et_items(xml_file_path, "offer"):
@@ -103,7 +91,6 @@ def process_xml_file(xml_file_path):
             params[param_name] = param_value
 
         features_json = json.dumps(params)
-
         sku_data = {
             "uuid": str(uuid.uuid4()),
             "marketplace_id": elem.get("marketplace_id"),
@@ -163,7 +150,6 @@ def process_xml_file(xml_file_path):
             ),
         }
         insert_sku(sku_data)
-
 
 if __name__ == "__main__":
     xml_file_path = os.getenv("XML_FILE")
