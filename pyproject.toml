@@ -1,8 +1,6 @@
 [tool.poetry]
-name = "data-uploader"
-version = "0.1.0"
+name = "test_task"
 description = ""
-authors = ["suer-tech <suer2505@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
