@@ -19,6 +19,6 @@ RUN ls -la
 
 RUN chmod +x prestart.sh
 RUN ls -la
-ENTRYPOINT  ["bash", "./prestart.sh"]
+ENTRYPOINT  ["bash", "./start.sh"]
 
 CMD ["python", "main.py"]
